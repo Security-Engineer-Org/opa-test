@@ -1,0 +1,34 @@
+
+name: Organization OPA Policy Validation
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  opa-validation:
+    name: Run OPA Policy Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout central OPA repository
+        uses: actions/checkout@v4
+        with:
+          repository: my-company/opa-test
+          ref: main
+          path: opa-policy
+
+      - name: Install OPA
+        uses: open-policy-agent/setup-opa@v2
+        with:
+          version: latest
+
+      - name: Run OPA tests
+        run: |
+          opa test opa-policy/policies -v
+
+      - name: Validate Rego syntax
+        run: |
+          opa check opa-policy/policies
