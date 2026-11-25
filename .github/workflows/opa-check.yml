@@ -16,7 +16,7 @@ jobs:
       - name: Checkout central OPA repository
         uses: actions/checkout@v4
         with:
-          repository: my-company/opa-test
+          repository: Security-Engineer-Org/opa-test
           ref: main
           path: opa-policy
 
