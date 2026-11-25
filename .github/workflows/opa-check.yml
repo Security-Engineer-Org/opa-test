@@ -2,7 +2,8 @@
 name: Organization OPA Policy Validation
 
 on:
-  workflow_call:
+  pull_request:
+  merge_group:
 
 permissions:
   contents: read
@@ -13,22 +14,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout central OPA repository
+      - name: Checkout central OPA policy repository
         uses: actions/checkout@v4
         with:
           repository: Security-Engineer-Org/opa-test
           ref: main
           path: opa-policy
+          token: ${{ secrets.OPA_POLICY_READ_TOKEN }}
 
       - name: Install OPA
         uses: open-policy-agent/setup-opa@v2
         with:
           version: latest
 
-      - name: Run OPA tests
-        run: |
-          opa test opa-policy/policies -v
+      - name: Check Rego syntax
+        run: opa check opa-policy/policies
 
-      - name: Validate Rego syntax
-        run: |
-          opa check opa-policy/policies
+      - name: Execute OPA tests
+        run: opa test opa-policy/policies -v
